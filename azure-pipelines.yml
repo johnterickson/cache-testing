@@ -3,6 +3,7 @@ pool:
 
 variables:
   KEY_SALT: 0
+  system.debug: true
 
 steps:
 - task: CacheBeta@0

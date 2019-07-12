@@ -1,0 +1,34 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  name: 'jerick-z440'
+
+variables:
+  KEY_SALT: 0
+
+steps:
+- task: CacheBeta@0
+  inputs:
+    key: $(KEY_SALT) | ./**
+    path: folder
+    cacheHitVar: cacheHit
+
+- bash: |
+    mkdir folder
+    echo Hello from $(Build.BuildId) > folder/hello.txt
+  condition: and(succeeded(), eq(variables['cacheHit'], 'false'))
+  displayName: cache miss
+
+- bash: |
+    echo Hello from $(Build.BuildId) >> folder/hello.txt
+  condition: and(succeeded(), eq(variables['cacheHit'], 'inexact'))
+  displayName: cache inexact hit
+
+- bash: cat folder/hello.txt
+  displayName: 'display hello.txt'

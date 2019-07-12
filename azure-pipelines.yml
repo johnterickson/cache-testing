@@ -15,9 +15,11 @@ variables:
 steps:
 - task: CacheBeta@0
   inputs:
-    key: $(KEY_SALT) | ./**
+    key: $(KEY_SALT) | ./**,!./.git/**
     path: folder
     cacheHitVar: cacheHit
+    restoreKeys: |
+      $(KEY_SALT)
 
 - bash: |
     mkdir folder

@@ -8,6 +8,22 @@ variables:
 steps:
 - task: CacheBeta@0
   inputs:
+    key: $(Agent.OS)
+    path: folder
+    cacheHitVar: cacheHit
+  displayName: single-line (new)
+
+- task: CacheBeta@0
+  inputs:
+    key: |
+      $(Agent.OS)
+      README.md
+    path: folder
+    cacheHitVar: cacheHit
+  displayName: multi-line (old)
+
+- task: CacheBeta@0
+  inputs:
     key: $(KEY_SALT) | $(Agent.OS) | ./**,!./.git/**,!./folder/**
     path: folder
     cacheHitVar: cacheHit

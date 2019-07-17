@@ -2,7 +2,7 @@ pool:
   name: 'jerick-z440'
 
 variables:
-  KEY_SALT: 0
+  KEY_SALT: 1
   system.debug: true
 
 steps:

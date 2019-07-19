@@ -5,8 +5,8 @@ pool:
 variables:
   KEY_SALT: 7
   system.debug: true
-  POOL_NAME: {}
-  VM_NAME: {}
+  POOL_NAME: ''
+  VM_NAME: ''
   
 strategy:
   matrix:

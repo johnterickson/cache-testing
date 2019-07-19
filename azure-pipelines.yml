@@ -8,6 +8,7 @@ variables:
   system.debug: true
   POOL_NAME: ''
   VM_NAME: ''
+  RUN_CACHE: 0
   
 strategy:
   matrix:
@@ -38,6 +39,12 @@ steps:
     restoreKeys: |
       $(KEY_SALT)-$(Agent.OS)-$(Agent.JobName)
   displayName: single-line (new)
+  condition: and(succeeded(), eq(variables['RUN_CACHE'], '1'))
+
+- bash: |
+    printenv | grep RESTORE_STEP_RAN
+    echo $(RESTORE_STEP_RAN)
+    echo $RESTORE_STEP_RAN
 
 - bash: |
     mkdir cached

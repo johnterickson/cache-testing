@@ -8,7 +8,7 @@ variables:
   system.debug: true
   POOL_NAME: ''
   VM_NAME: ''
-  RUN_CACHE: 0
+  RUN_CACHE: 1
   
 strategy:
   matrix:

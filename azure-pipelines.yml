@@ -3,12 +3,12 @@ pool:
   vmImage: $(VM_NAME)
 
 variables:
-  KEY_SALT: 9
+  KEY_SALT: 10
   FALLBACK_SALT: 2
   system.debug: true
   POOL_NAME: ''
   VM_NAME: ''
-  RUN_CACHE: 1
+  RUN_CACHE: 0
   
 strategy:
   matrix:

@@ -1,11 +1,18 @@
 pool:
-  name: 'jerick-z440'
-  #vmImage: 'windows-2019-vs2019'
+  name: $(POOL_NAME)
+  vmImage: $(VM_NAME)
 
 variables:
   KEY_SALT: 7
   system.debug: true
-
+  
+strategy:
+  matrix:
+    private-new:
+      POOL_NAME: 'jerick-z440'
+    hosted:
+      VM_NAME: 'windows-2019-vs2019'
+    
 steps:
 - bash: |
     echo file1>file1.txt

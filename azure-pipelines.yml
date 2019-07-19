@@ -3,7 +3,8 @@ pool:
   vmImage: $(VM_NAME)
 
 variables:
-  KEY_SALT: 8
+  KEY_SALT: 9
+  FALLBACK_SALT: 0
   system.debug: true
   POOL_NAME: ''
   VM_NAME: ''
@@ -31,7 +32,7 @@ steps:
   inputs:
     cacheHitVar: cacheHit
     path: cached
-    key: $(KEY_SALT) | $(Agent.OS) | **/file*.txt,!**/file2.txt,!**/subfolder1/**
+    key: $(KEY_SALT) | $(Agent.OS) | $(FALLBACK_SALT) | **/file*.txt,!**/file2.txt,!**/subfolder1/**
     restoreKeys: |
       $(KEY_SALT) | $(Agent.OS)
   displayName: single-line (new)

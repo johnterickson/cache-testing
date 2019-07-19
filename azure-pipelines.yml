@@ -12,8 +12,10 @@ strategy:
   matrix:
     private-new:
       POOL_NAME: 'jerick-z440'
-    hosted:
-      VM_NAME: 'windows-2019-vs2019'
+    private-master:
+      POOL_NAME: 'jerick-z440-master'
+    # hosted:
+    #   VM_NAME: 'windows-2019-vs2019'
     
 steps:
 - bash: |

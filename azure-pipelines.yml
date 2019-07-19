@@ -3,7 +3,7 @@ pool:
   #vmImage: 'windows-2019-vs2019'
 
 variables:
-  KEY_SALT: 3
+  KEY_SALT: 4
   system.debug: true
 
 steps:
@@ -39,25 +39,25 @@ steps:
 - bash: cat cached/hello.txt
   displayName: 'display cached/hello.txt'
 
-- task: CacheBeta@0
-  inputs:
-    cacheHitVar: cacheHit2
-    key: |
-      $(Agent.OS)
-      README.md
-    path: oldcached
-  displayName: multi-line (old)
+# - task: CacheBeta@0
+#   inputs:
+#     cacheHitVar: cacheHit2
+#     key: |
+#       $(Agent.OS)
+#       README.md
+#     path: oldcached
+#   displayName: multi-line (old)
 
-- bash: |
-    mkdir oldcached
-    echo Hello from $(Build.BuildId) > oldcached/hello.txt
-  condition: and(succeeded(), eq(variables['cacheHit2'], 'false'))
-  displayName: cache miss
+# - bash: |
+#     mkdir oldcached
+#     echo Hello from $(Build.BuildId) > oldcached/hello.txt
+#   condition: and(succeeded(), eq(variables['cacheHit2'], 'false'))
+#   displayName: cache miss
 
-- bash: |
-    echo Hello from $(Build.BuildId) >> oldcached/hello.txt
-  condition: and(succeeded(), eq(variables['cacheHit2'], 'inexact'))
-  displayName: cache inexact hit
+# - bash: |
+#     echo Hello from $(Build.BuildId) >> oldcached/hello.txt
+#   condition: and(succeeded(), eq(variables['cacheHit2'], 'inexact'))
+#   displayName: cache inexact hit
 
-- bash: cat oldcached/hello.txt
-  displayName: 'display oldcached/hello.txt'
+# - bash: cat oldcached/hello.txt
+#   displayName: 'display oldcached/hello.txt'

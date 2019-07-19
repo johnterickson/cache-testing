@@ -1,5 +1,6 @@
 pool:
-  name: 'jerickmmsdf'
+  #name: 'jerick-z440'
+  vmImage: 'windows-2019-vs2019'
 
 variables:
   KEY_SALT: 1

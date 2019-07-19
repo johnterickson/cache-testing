@@ -34,9 +34,9 @@ steps:
   inputs:
     cacheHitVar: cacheHit
     path: cached
-    key: $(KEY_SALT) | $(Agent.OS) | $(FALLBACK_SALT) | **/file*.txt,!**/file2.txt,!**/subfolder1/**
+    key: $(KEY_SALT)-$(Agent.OS)-$(Agent.JobName) | $(FALLBACK_SALT) | **/file*.txt,!**/file2.txt,!**/subfolder1/**
     restoreKeys: |
-      $(KEY_SALT) | $(Agent.OS)
+      $(KEY_SALT)-$(Agent.OS)-$(Agent.JobName)
   displayName: single-line (new)
 
 - bash: |
@@ -57,7 +57,7 @@ steps:
   inputs:
     cacheHitVar: cacheHit2
     key: |
-      $(Agent.OS)
+      $(Agent.OS)-$(Agent.JobName)
       README.md
     path: oldcached
   displayName: multi-line (old)

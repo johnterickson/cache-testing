@@ -3,7 +3,7 @@ pool:
   vmImage: $(VM_NAME)
 
 variables:
-  KEY_SALT: 13
+  KEY_SALT: 14
   FALLBACK_SALT: 0
   system.debug: true
   POOL_NAME: ''

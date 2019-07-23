@@ -4,7 +4,7 @@ pool:
 
 variables:
   KEY_SALT: 14
-  FALLBACK_SALT: 0
+  FALLBACK_SALT: 1
   system.debug: true
   POOL_NAME: ''
   VM_NAME: ''

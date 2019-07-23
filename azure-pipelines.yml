@@ -3,7 +3,7 @@ pool:
   vmImage: $(VM_NAME)
 
 variables:
-  KEY_SALT: 11
+  KEY_SALT: 12
   FALLBACK_SALT: 2
   system.debug: true
   POOL_NAME: ''
@@ -12,8 +12,8 @@ variables:
   
 strategy:
   matrix:
-    # private-new:
-    #   POOL_NAME: 'jerick-z440'
+    private-new:
+      POOL_NAME: 'jerick-z440'
     # private-new-wsl:
     #   POOL_NAME: 'jerick-z440-wsl'
     # private-master:

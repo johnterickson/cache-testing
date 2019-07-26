@@ -35,12 +35,9 @@ steps:
   inputs:
     cacheHitVar: cacheHit
     path: cached
-    key: |
+    key: $(KEY_SALT)-$(Agent.OS)-$(Agent.JobName) | $(FALLBACK_SALT) | **/file*.txt,!**/file2.txt,!**/subfolder1/**
+    restoreKeys: |
       $(KEY_SALT)-$(Agent.OS)-$(Agent.JobName)
-      $(FALLBACK_SALT)
-      **/file*.txt,!**/file2.txt,!**/subfolder1/**
-    # restoreKeys: |
-    #   $(KEY_SALT)-$(Agent.OS)-$(Agent.JobName)
   displayName: single-line (new)
   condition: and(succeeded(), eq(variables['RUN_CACHE'], '1'))
 

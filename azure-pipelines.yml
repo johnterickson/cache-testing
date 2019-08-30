@@ -1,85 +1,167 @@
-pool:
-  name: $(POOL_NAME)
-  vmImage: $(VM_NAME)
 
-variables:
-  KEY_SALT: 15
-  FALLBACK_SALT: 1
-  system.debug: true
-  POOL_NAME: ''
-  VM_NAME: ''
-  RUN_CACHE: 1
+
+stages:
+  - stage: NoTar
+    jobs:
+      - job:
+        steps:
+          - bash: |
+              echo file1>file1.txt
+              mkdir folder1
+              cd folder1
+              echo file2>file2.txt
+              mkdir subfolder1
+              cd subfolder1
+              echo file3>file3.txt
+          - task: CacheBeta@0
+            inputs:
+              path: cached
+              cacheHitVar: cacheHit
+              key: '"$(Agent.JobName)" | "$(Build.BuildId)"'
+              restoreKeys: |
+                "$(Agent.JobName)"
+          - bash: |
+              mkdir cached
+              echo Hello from $(Build.BuildId) > cached/hello.txt
+            condition: and(succeeded(), eq(variables['cacheHit'], 'false'))
+            displayName: cache miss
+
+          - bash: |
+              echo Hello from $(Build.BuildId) >> cached/hello.txt
+            condition: and(succeeded(), eq(variables['cacheHit'], 'inexact'))
+            displayName: cache inexact hit
+
+          - bash: cat cached/hello.txt
+            displayName: 'display cached/hello.txt'
+            condition: and(succeeded(), eq(variables['RUN_CACHE'], '1'))
+
+          - bash: |
+              ls -l *
+              ls -l cached/*
+  - stage: Tar
+    dependsOn: NoTar
+    jobs:
+      - job:
+        variables:
+          AZP_CACHING_CONTENT_FORMAT: SingleTar
+          AZP_CACHING_TAR: 1
+        steps:
+          - bash: |
+              echo file1>file1.txt
+              mkdir folder1
+              cd folder1
+              echo file2>file2.txt
+              mkdir subfolder1
+              cd subfolder1
+              echo file3>file3.txt
+          - task: CacheBeta@0
+            inputs:
+              path: cached
+              cacheHitVar: cacheHit
+              key: '"$(Agent.JobName)" | "$(Build.BuildId)"'
+              restoreKeys: |
+                "$(Agent.JobName)"
+          - bash: |
+              mkdir cached
+              echo Hello from $(Build.BuildId) > cached/hello.txt
+            condition: and(succeeded(), eq(variables['cacheHit'], 'false'))
+            displayName: cache miss
+
+          - bash: |
+              echo Hello from $(Build.BuildId) >> cached/hello.txt
+            condition: and(succeeded(), eq(variables['cacheHit'], 'inexact'))
+            displayName: cache inexact hit
+
+          - bash: cat cached/hello.txt
+            displayName: 'display cached/hello.txt'
+            condition: and(succeeded(), eq(variables['RUN_CACHE'], '1'))
+
+          - bash: |
+              ls -l *
+              ls -l cached/*
+
+# pool:
+#   name: $(POOL_NAME)
+#   vmImage: $(VM_NAME)
+
+# variables:
+#   KEY_SALT: 15
+#   FALLBACK_SALT: 1
+#   system.debug: true
+#   POOL_NAME: ''
+#   VM_NAME: ''
+#   RUN_CACHE: 1
   
-strategy:
-  matrix:
-    private-new:
-      POOL_NAME: 'jerick-z440'
-    # private-new-wsl:
-    #   POOL_NAME: 'jerick-z440-wsl'
-    # private-master:
-    #   POOL_NAME: 'jerick-z440-master'
-    hosted:
-      VM_NAME: 'windows-2019-vs2019'
+# strategy:
+#   matrix:
+#     private-new:
+#       POOL_NAME: 'jerick-z440'
+#     # private-new-wsl:
+#     #   POOL_NAME: 'jerick-z440-wsl'
+#     # private-master:
+#     #   POOL_NAME: 'jerick-z440-master'
+#     hosted:
+#       VM_NAME: 'windows-2019-vs2019'
     
-steps:
-- bash: |
-    echo file1>file1.txt
-    mkdir folder1
-    cd folder1
-    echo file2>file2.txt
-    mkdir subfolder1
-    cd subfolder1
-    echo file3>file3.txt
+# steps:
+# - bash: |
+#     echo file1>file1.txt
+#     mkdir folder1
+#     cd folder1
+#     echo file2>file2.txt
+#     mkdir subfolder1
+#     cd subfolder1
+#     echo file3>file3.txt
 
-- task: CacheBeta@0
-  inputs:
-    cacheHitVar: cacheHit
-    path: cached
-    key: $(KEY_SALT)-$(Agent.OS)-$(Agent.JobName) | $(FALLBACK_SALT) | **/file*.txt,!**/file2.txt,!**/subfolder1/**
-    restoreKeys: |
-      $(KEY_SALT)-$(Agent.OS)-$(Agent.JobName)
-  displayName: single-line (new)
-  condition: and(succeeded(), eq(variables['RUN_CACHE'], '1'))
+# - task: CacheBeta@0
+#   inputs:
+#     cacheHitVar: cacheHit
+#     path: cached
+#     key: $(KEY_SALT)-$(Agent.OS)-$(Agent.JobName) | $(FALLBACK_SALT) | **/file*.txt,!**/file2.txt,!**/subfolder1/**
+#     restoreKeys: |
+#       $(KEY_SALT)-$(Agent.OS)-$(Agent.JobName)
+#   displayName: single-line (new)
+#   condition: and(succeeded(), eq(variables['RUN_CACHE'], '1'))
 
-- bash: |
-    printenv | grep RESTORE_STEP_RAN
-    echo $(RESTORE_STEP_RAN)
-    echo $RESTORE_STEP_RAN
+# - bash: |
+#     printenv | grep RESTORE_STEP_RAN
+#     echo $(RESTORE_STEP_RAN)
+#     echo $RESTORE_STEP_RAN
 
-- bash: |
-    mkdir cached
-    echo Hello from $(Build.BuildId) > cached/hello.txt
-  condition: and(succeeded(), eq(variables['cacheHit'], 'false'))
-  displayName: cache miss
+# - bash: |
+#     mkdir cached
+#     echo Hello from $(Build.BuildId) > cached/hello.txt
+#   condition: and(succeeded(), eq(variables['cacheHit'], 'false'))
+#   displayName: cache miss
 
-- bash: |
-    echo Hello from $(Build.BuildId) >> cached/hello.txt
-  condition: and(succeeded(), eq(variables['cacheHit'], 'inexact'))
-  displayName: cache inexact hit
+# - bash: |
+#     echo Hello from $(Build.BuildId) >> cached/hello.txt
+#   condition: and(succeeded(), eq(variables['cacheHit'], 'inexact'))
+#   displayName: cache inexact hit
 
-- bash: cat cached/hello.txt
-  displayName: 'display cached/hello.txt'
-  condition: and(succeeded(), eq(variables['RUN_CACHE'], '1'))
+# - bash: cat cached/hello.txt
+#   displayName: 'display cached/hello.txt'
+#   condition: and(succeeded(), eq(variables['RUN_CACHE'], '1'))
 
-- task: CacheBeta@0
-  inputs:
-    cacheHitVar: cacheHit2
-    key: |
-      $(Agent.OS)-$(Agent.JobName)
-      README.md
-    path: oldcached
-  displayName: multi-line (old)
+# - task: CacheBeta@0
+#   inputs:
+#     cacheHitVar: cacheHit2
+#     key: |
+#       $(Agent.OS)-$(Agent.JobName)
+#       README.md
+#     path: oldcached
+#   displayName: multi-line (old)
 
-- bash: |
-    mkdir oldcached
-    echo Hello from $(Build.BuildId) > oldcached/hello.txt
-  condition: and(succeeded(), eq(variables['cacheHit2'], 'false'))
-  displayName: cache miss
+# - bash: |
+#     mkdir oldcached
+#     echo Hello from $(Build.BuildId) > oldcached/hello.txt
+#   condition: and(succeeded(), eq(variables['cacheHit2'], 'false'))
+#   displayName: cache miss
 
-- bash: |
-    echo Hello from $(Build.BuildId) >> oldcached/hello.txt
-  condition: and(succeeded(), eq(variables['cacheHit2'], 'inexact'))
-  displayName: cache inexact hit
+# - bash: |
+#     echo Hello from $(Build.BuildId) >> oldcached/hello.txt
+#   condition: and(succeeded(), eq(variables['cacheHit2'], 'inexact'))
+#   displayName: cache inexact hit
 
-- bash: cat oldcached/hello.txt
-  displayName: 'display oldcached/hello.txt'
+# - bash: cat oldcached/hello.txt
+#   displayName: 'display oldcached/hello.txt'
